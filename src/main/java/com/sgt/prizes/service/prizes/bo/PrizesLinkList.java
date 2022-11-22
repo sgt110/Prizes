@@ -1,7 +1,7 @@
 /*
  * Project: Prizes
  *
- * File Created at 2022-11-14
+ * File Created at 2022-11-21
  *
  * Copyright 2012-2015 Greenline.com Corporation Limited.
  * All rights reserved.
@@ -12,23 +12,34 @@
  * accordance with the terms of the license agreement you entered into
  * with Greenline.com.
  */
-package com.sgt.prizes.service.prizes;
+package com.sgt.prizes.service.prizes.bo;
 
-import com.sgt.prizes.service.prizes.bo.PrizesBO;
+import java.math.BigDecimal;
+
+import lombok.Data;
 
 /**
- * 抽奖service
+ * 抽奖概率链表
  *
  * @author sungt
  * @version V1.0
- * @since 2022-11-14 18:02
+ * @since 2022-11-21 17:12
  */
-public interface PrizesService {
+@Data
+public class PrizesLinkList {
 
     /**
-     * 单抽
-     * @return 返回奖品数据
+     * 最小值
      */
-    PrizesBO lottery();
+    private BigDecimal minNum;
 
+    /**
+     * 奖品等级
+     */
+    private PrizesLevelBO levelBO;
+
+    /**
+     * 下一个节点
+     */
+    private PrizesLinkList nextNode;
 }

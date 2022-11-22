@@ -1,7 +1,7 @@
 /*
  * Project: Prizes
  *
- * File Created at 2022-11-14
+ * File Created at 2022-11-21
  *
  * Copyright 2012-2015 Greenline.com Corporation Limited.
  * All rights reserved.
@@ -12,23 +12,21 @@
  * accordance with the terms of the license agreement you entered into
  * with Greenline.com.
  */
-package com.sgt.prizes.service.prizes;
-
-import com.sgt.prizes.service.prizes.bo.PrizesBO;
+package com.sgt.prizes.common;
 
 /**
- * 抽奖service
+ * TODO
  *
  * @author sungt
  * @version V1.0
- * @since 2022-11-14 18:02
+ * @since 2022-11-21 16:41
  */
-public interface PrizesService {
+public interface ServiceCode extends ResultCode {
+    default PrizesException failure() {
+        return new PrizesException(this);
+    }
 
-    /**
-     * 单抽
-     * @return 返回奖品数据
-     */
-    PrizesBO lottery();
-
+    default PrizesException failure(Throwable cause) {
+        return new PrizesException(this, cause);
+    }
 }
