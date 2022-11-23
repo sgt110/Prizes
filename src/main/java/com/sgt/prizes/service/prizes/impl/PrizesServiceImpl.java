@@ -19,6 +19,8 @@ import com.sgt.prizes.dal.prizes.PrizesMapper;
 import com.sgt.prizes.dal.prizes.po.PrizesPO;
 import com.sgt.prizes.dal.prizeslevel.PrizesLevelMapper;
 import com.sgt.prizes.dal.prizeslevel.po.PrizesLevelPO;
+import com.sgt.prizes.dal.prizesrecord.PrizesRecordMapper;
+import com.sgt.prizes.dal.prizesrecord.po.PrizesRecordPO;
 import com.sgt.prizes.service.prizes.PrizesService;
 import com.sgt.prizes.service.prizes.bo.PrizesBO;
 import com.sgt.prizes.service.prizes.bo.PrizesLevelBO;
@@ -26,6 +28,7 @@ import com.sgt.prizes.service.prizes.bo.PrizesLinkList;
 import com.sgt.prizes.service.prizes.transform.PrizesTransform;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -52,6 +55,9 @@ public class PrizesServiceImpl implements PrizesService {
     @Resource
     private PrizesMapper prizesMapper;
 
+    @Resource
+    private PrizesRecordMapper prizesRecordMapper;
+
     @Override
     public PrizesBO lottery() {
 
@@ -70,7 +76,8 @@ public class PrizesServiceImpl implements PrizesService {
         BigDecimal randNum = new BigDecimal(num).divide(new BigDecimal(10000), 4, BigDecimal.ROUND_HALF_UP);
         PrizesLevelBO prizesBO = getRandPrizes(randNum, levelLink);
         //获取具体奖品
-        List<PrizesPO> prizesPoList = prizesMapper.listByLevelId(prizesBO.getId());
+        //此处在高并发下应该加上锁
+        List<PrizesPO> prizesPoList = prizesMapper.listInStockByLevelId(prizesBO.getId());
         int allWeight = prizesPoList.stream().mapToInt(PrizesPO::getPrizesWeight).sum();
         //权重随机数
         Integer randNum2 = getRandomInt(allWeight + 1);
@@ -82,8 +89,32 @@ public class PrizesServiceImpl implements PrizesService {
             }
             left += po.getPrizesWeight();
         }
-        return PrizesTransform.transPo2Bo(prizesPoS[randNum2-1]);
+        PrizesPO returnPrizes = prizesPoS[randNum2 - 1];
+        //扣减库存
+        deductionInventory(returnPrizes);
+        //记录数据
+        saveRecord(returnPrizes);
+
+        return PrizesTransform.transPo2Bo(returnPrizes);
     }
+
+    private void saveRecord(PrizesPO returnPrizes) {
+        PrizesRecordPO recordPO = PrizesRecordPO.builder().prizesId(returnPrizes.getId()).prizesLevelId(
+            returnPrizes.getPrizesLevelId()).prizesRecordUser("system").prizesRecordTime(new Date()).build();
+        prizesRecordMapper.insert(recordPO);
+    }
+
+    private Boolean deductionInventory(PrizesPO returnPrizes) {
+        if (returnPrizes.getPrizesNum() == -1){
+            return Boolean.TRUE;
+        }
+        int num = prizesMapper.deductionInventory(returnPrizes.getId());
+        if (num > 0) {
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
 
     private PrizesLevelBO getRandPrizes(BigDecimal randNum, PrizesLinkList levelLink) {
         if (levelLink.getMinNum().compareTo(randNum)< 0 && levelLink.getNextNode() == null){

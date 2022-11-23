@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sgt.prizes.dal.prizes.PrizesMapper">
 
     <resultMap id="BaseResultMap" type="com.sgt.prizes.dal.prizes.po.PrizesPO">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="prizesName" column="prizes_name" jdbcType="VARCHAR"/>
-            <result property="prizesDesc" column="prizes_desc" jdbcType="VARCHAR"/>
-            <result property="prizesLevelId" column="prizes_level_id" jdbcType="INTEGER"/>
-            <result property="prizesNum" column="prizes_num" jdbcType="INTEGER"/>
-            <result property="prizesWeight" column="prizes_weight" jdbcType="INTEGER"/>
-            <result property="picUrl" column="pic_url" jdbcType="VARCHAR"/>
-            <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
-            <result property="gmtCreated" column="gmt_created" jdbcType="TIMESTAMP"/>
-            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="prizesName" column="prizes_name" jdbcType="VARCHAR"/>
+        <result property="prizesDesc" column="prizes_desc" jdbcType="VARCHAR"/>
+        <result property="prizesLevelId" column="prizes_level_id" jdbcType="INTEGER"/>
+        <result property="prizesNum" column="prizes_num" jdbcType="INTEGER"/>
+        <result property="prizesWeight" column="prizes_weight" jdbcType="INTEGER"/>
+        <result property="picUrl" column="pic_url" jdbcType="VARCHAR"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+        <result property="gmtCreated" column="gmt_created" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -22,8 +22,15 @@
         prizes_level_id,prizes_num,prizes_weight,pic_url,
         is_deleted,gmt_created,gmt_modified
     </sql>
-    <select id="listByLevelId" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/>
-        from prizes where is_deleted = 0 and prizes_level_id = #{prizesLevelId}
+    <update id="deductionInventory">
+        update prizes
+        set prizes_num = prizes_num - 1
+        where id = #{id}
+    </update>
+    <select id="listInStockByLevelId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from prizes
+        where is_deleted = 0 and prizes_num != 0 and prizes_level_id = #{prizesLevelId}
     </select>
 </mapper>

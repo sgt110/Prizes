@@ -20,7 +20,14 @@ public interface PrizesMapper {
      * @param prizesLevelId 奖品等级ID
      * @return 具体奖品列表
      */
-    List<PrizesPO> listByLevelId(Integer prizesLevelId);
+    List<PrizesPO> listInStockByLevelId(Integer prizesLevelId);
+
+    /**
+     * 库存-1
+     * @param id id
+     * @return 影响行数
+     */
+    int deductionInventory(Integer id);
 }
 
 

@@ -16,6 +16,8 @@ package com.sgt.prizes.service.prizes;
 
 import com.sgt.prizes.service.prizes.bo.PrizesBO;
 
+import java.util.List;
+
 /**
  * 抽奖service
  *
