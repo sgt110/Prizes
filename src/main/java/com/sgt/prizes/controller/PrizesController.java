@@ -18,6 +18,8 @@ import com.sgt.prizes.common.Result;
 import com.sgt.prizes.service.prizes.PrizesService;
 import com.sgt.prizes.service.prizes.bo.PrizesBO;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +48,16 @@ public class PrizesController {
     @PostMapping("/one")
     public Result<PrizesBO> prizesOne() {
         return Result.success(prizesService.lottery());
+    }
+
+    /**
+     * 十连抽
+     *
+     * @return
+     */
+    @PostMapping("/ten")
+    public Result<List<PrizesBO>> prizesTen() {
+        return Result.success(prizesService.lotteryTen());
     }
 
 }

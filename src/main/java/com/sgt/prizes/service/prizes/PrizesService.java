@@ -33,4 +33,5 @@ public interface PrizesService {
      */
     PrizesBO lottery();
 
+    List<PrizesBO> lotteryTen();
 }

@@ -28,6 +28,7 @@ import com.sgt.prizes.service.prizes.bo.PrizesLinkList;
 import com.sgt.prizes.service.prizes.transform.PrizesTransform;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -96,6 +97,17 @@ public class PrizesServiceImpl implements PrizesService {
         saveRecord(returnPrizes);
 
         return PrizesTransform.transPo2Bo(returnPrizes);
+    }
+
+    @Override
+    public List<PrizesBO> lotteryTen() {
+        List<PrizesBO> boList = new ArrayList<>(10);
+        for (int i = 0; i < 10; i++) {
+            PrizesBO bo = lottery();
+            boList.add(bo);
+        }
+
+        return boList;
     }
 
     private void saveRecord(PrizesPO returnPrizes) {
